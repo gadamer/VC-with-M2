@@ -1,55 +1,65 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Code, Zap, Users, Trophy, BookOpen, Rocket } from 'lucide-react'
+import { Code, Zap, Trophy, Users, BookOpen, Star } from 'lucide-react'
 
 const features = [
   {
     icon: Code,
-    title: 'Hands-On Projects',
-    description: 'Build real applications from day one with guided project-based learning that builds your portfolio.'
+    title: 'Learn by Doing',
+    description: 'Build real projects from day one with hands-on coding exercises and practical applications.',
+    gradient: 'from-primary-400 to-primary-600'
   },
   {
     icon: Zap,
-    title: 'Fast-Track Learning',
-    description: 'Skip the fluff and focus on what matters. Learn practical coding skills in weeks, not years.'
-  },
-  {
-    icon: Users,
-    title: 'Community Support',
-    description: 'Join a vibrant community of learners and get help whenever you need it from peers and mentors.'
+    title: 'Fast Track Learning',
+    description: 'Accelerated curriculum designed to get you coding confidently in weeks, not months.',
+    gradient: 'from-accent-400 to-accent-600'
   },
   {
     icon: Trophy,
     title: 'Industry Recognition',
-    description: 'Earn certificates that employers recognize and showcase your skills with confidence.'
+    description: 'Earn certificates that employers value and showcase your skills with portfolio projects.',
+    gradient: 'from-yellow-400 to-orange-500'
+  },
+  {
+    icon: Users,
+    title: 'Community Support',
+    description: 'Join thousands of learners in our supportive community with mentorship and peer learning.',
+    gradient: 'from-green-400 to-emerald-600'
   },
   {
     icon: BookOpen,
-    title: 'Beginner Friendly',
-    description: 'No prior experience needed. Start from absolute zero and build up to professional-level skills.'
+    title: 'Comprehensive Curriculum',
+    description: 'From basics to advanced concepts, master everything you need for a successful coding career.',
+    gradient: 'from-blue-400 to-indigo-600'
   },
   {
-    icon: Rocket,
-    title: 'Career Ready',
-    description: 'Learn the exact skills and tools used by professional developers in the industry today.'
+    icon: Star,
+    title: 'Lifetime Access',
+    description: 'Get lifetime access to all course materials, updates, and new content as we expand.',
+    gradient: 'from-purple-400 to-pink-600'
   }
 ]
 
 export default function Features() {
   return (
-    <section id="features" className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="features" className="py-20 relative">
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary-500/5 to-transparent"></div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Why Choose <span className="gradient-text">Vibe Coding</span>?
+          <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+            <span className="gradient-text">Why Choose</span>
+            <span className="text-white"> Vibe Coding?</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            We've designed the perfect learning experience for complete beginners who want to become confident coders
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            Our unique approach combines practical learning with creative expression, 
+            helping you build both technical skills and artistic vision.
           </p>
         </motion.div>
 
@@ -61,17 +71,17 @@ export default function Features() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
-              className="card p-8 hover:scale-105 transition-transform duration-300"
+              className="card p-8 group hover:scale-105 transition-transform duration-300"
             >
-              <div className="flex items-center space-x-4 mb-4">
-                <div className="p-3 bg-gradient-to-br from-primary-100 to-accent-100 rounded-xl">
-                  <feature.icon className="h-6 w-6 text-primary-600" />
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900">
-                  {feature.title}
-                </h3>
+              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${feature.gradient} p-4 mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                <feature.icon className="h-8 w-8 text-white" />
               </div>
-              <p className="text-gray-600 leading-relaxed">
+              
+              <h3 className="text-xl font-bold text-white mb-4 group-hover:text-primary-400 transition-colors">
+                {feature.title}
+              </h3>
+              
+              <p className="text-gray-300 leading-relaxed">
                 {feature.description}
               </p>
             </motion.div>

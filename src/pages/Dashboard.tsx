@@ -1,43 +1,43 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
+import { Play, BookOpen, Trophy, Clock, User, LogOut, X } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
-import { Play, BookOpen, Award, Clock, User, Settings, LogOut } from 'lucide-react'
-import CourseModal from '../components/CourseModal'
 
 export default function Dashboard() {
   const { user, signOut } = useAuth()
-  const [courseModalOpen, setCourseModalOpen] = useState(false)
+  const [showCourse, setShowCourse] = useState(false)
 
   const stats = [
-    { label: 'Lessons Completed', value: '12/45', icon: BookOpen },
-    { label: 'Hours Learned', value: '24.5', icon: Clock },
-    { label: 'Certificates', value: '2', icon: Award },
-    { label: 'Projects Built', value: '5', icon: Play }
+    { label: 'Lessons Completed', value: '12/24', icon: BookOpen, color: 'from-primary-500 to-primary-600' },
+    { label: 'Hours Learned', value: '18.5', icon: Clock, color: 'from-accent-500 to-accent-600' },
+    { label: 'Certificates Earned', value: '2', icon: Trophy, color: 'from-yellow-500 to-orange-500' },
+  ]
+
+  const recentLessons = [
+    { title: 'HTML Fundamentals', progress: 100, duration: '45 min' },
+    { title: 'CSS Styling Basics', progress: 85, duration: '60 min' },
+    { title: 'JavaScript Introduction', progress: 60, duration: '75 min' },
+    { title: 'React Components', progress: 30, duration: '90 min' },
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen dark-gradient-bg">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="glass-effect border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <h1 className="text-2xl font-bold gradient-text">Dashboard</h1>
-            
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <User className="h-5 w-5 text-gray-400" />
-                <span className="text-sm text-gray-600">{user?.email}</span>
+                <span className="text-gray-300">{user?.email}</span>
               </div>
-              
-              <button className="p-2 text-gray-400 hover:text-gray-600">
-                <Settings className="h-5 w-5" />
-              </button>
-              
               <button
                 onClick={() => signOut()}
-                className="p-2 text-gray-400 hover:text-red-600"
+                className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors"
               >
                 <LogOut className="h-5 w-5" />
+                <span>Sign Out</span>
               </button>
             </div>
           </div>
@@ -51,16 +51,14 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          <h2 className="text-3xl font-bold text-white mb-2">
             Welcome back! 👋
           </h2>
-          <p className="text-gray-600">
-            Ready to continue your coding journey? Let's pick up where you left off.
-          </p>
+          <p className="text-gray-300">Ready to continue your coding journey?</p>
         </motion.div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
           {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
@@ -71,148 +69,132 @@ export default function Dashboard() {
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
-                  <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                  <p className="text-gray-400 text-sm">{stat.label}</p>
+                  <p className="text-2xl font-bold text-white mt-1">{stat.value}</p>
                 </div>
-                <div className="p-3 bg-gradient-to-br from-primary-100 to-accent-100 rounded-xl">
-                  <stat.icon className="h-6 w-6 text-primary-600" />
+                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} p-3`}>
+                  <stat.icon className="h-6 w-6 text-white" />
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
 
-        {/* Main Course Section */}
         <div className="grid lg:grid-cols-3 gap-8">
+          {/* Continue Learning */}
           <div className="lg:col-span-2">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="card p-8"
+              transition={{ delay: 0.3 }}
+              className="card p-6 mb-6"
             >
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-gray-900">
-                  Continue Learning
-                </h3>
-                <div className="text-sm text-gray-500">
-                  Progress: 27%
-                </div>
-              </div>
-
-              <div className="mb-6">
-                <div className="flex justify-between text-sm text-gray-600 mb-2">
-                  <span>JavaScript Fundamentals</span>
-                  <span>12/45 lessons</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-gradient-to-r from-primary-600 to-accent-600 h-2 rounded-full" style={{ width: '27%' }}></div>
-                </div>
-              </div>
-
-              <div className="flex items-center space-x-4">
-                <button
-                  onClick={() => setCourseModalOpen(true)}
-                  className="btn-primary flex items-center space-x-2"
-                >
-                  <Play className="h-5 w-5" />
-                  <span>Continue Course</span>
-                </button>
-                
-                <button className="btn-secondary">
-                  View All Lessons
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Recent Activity */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="card p-8 mt-8"
-            >
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Recent Activity</h3>
-              
+              <h3 className="text-xl font-bold text-white mb-4">Continue Learning</h3>
               <div className="space-y-4">
-                {[
-                  { title: 'Completed: Variables and Data Types', time: '2 hours ago' },
-                  { title: 'Started: Functions and Scope', time: '1 day ago' },
-                  { title: 'Earned: JavaScript Basics Certificate', time: '3 days ago' },
-                  { title: 'Completed: HTML & CSS Fundamentals', time: '1 week ago' }
-                ].map((activity, index) => (
-                  <div key={index} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
-                    <span className="text-gray-900">{activity.title}</span>
-                    <span className="text-sm text-gray-500">{activity.time}</span>
+                {recentLessons.map((lesson, index) => (
+                  <div key={lesson.title} className="flex items-center justify-between p-4 bg-dark-800/30 rounded-lg border border-dark-700">
+                    <div className="flex-1">
+                      <h4 className="font-medium text-white">{lesson.title}</h4>
+                      <div className="flex items-center space-x-4 mt-2">
+                        <div className="flex-1 bg-dark-700 rounded-full h-2">
+                          <div
+                            className="bg-gradient-to-r from-primary-500 to-accent-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${lesson.progress}%` }}
+                          />
+                        </div>
+                        <span className="text-sm text-gray-400">{lesson.progress}%</span>
+                      </div>
+                    </div>
+                    <div className="ml-4 text-right">
+                      <p className="text-sm text-gray-400">{lesson.duration}</p>
+                      <button className="mt-2 text-primary-400 hover:text-primary-300 transition-colors">
+                        <Play className="h-5 w-5" />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
             </motion.div>
+
+            {/* Course Access */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="card p-6"
+            >
+              <h3 className="text-xl font-bold text-white mb-4">Full Course Access</h3>
+              <p className="text-gray-300 mb-6">
+                Access the complete Vibe Coding course with all lessons, projects, and resources.
+              </p>
+              <button
+                onClick={() => setShowCourse(true)}
+                className="btn-primary w-full"
+              >
+                <Play className="h-5 w-5 mr-2" />
+                Launch Course
+              </button>
+            </motion.div>
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-8">
+          <div className="space-y-6">
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
               className="card p-6"
             >
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Next Up</h3>
-              
-              <div className="space-y-3">
-                <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                  <Play className="h-5 w-5 text-primary-600" />
-                  <div>
-                    <p className="font-medium text-gray-900">Arrays & Objects</p>
-                    <p className="text-sm text-gray-600">15 min</p>
-                  </div>
+              <h3 className="text-lg font-bold text-white mb-4">Next Milestone</h3>
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-accent-500 to-primary-500 rounded-full flex items-center justify-center">
+                  <Trophy className="h-10 w-10 text-white" />
                 </div>
-                
-                <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                  <Play className="h-5 w-5 text-primary-600" />
-                  <div>
-                    <p className="font-medium text-gray-900">DOM Manipulation</p>
-                    <p className="text-sm text-gray-600">22 min</p>
-                  </div>
+                <h4 className="font-medium text-white mb-2">JavaScript Master</h4>
+                <p className="text-sm text-gray-400 mb-4">Complete 5 more lessons</p>
+                <div className="bg-dark-700 rounded-full h-2">
+                  <div className="bg-gradient-to-r from-accent-500 to-primary-500 h-2 rounded-full w-3/4" />
                 </div>
               </div>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.7 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
               className="card p-6"
             >
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Achievements</h3>
-              
-              <div className="space-y-3">
-                <div className="flex items-center space-x-3">
-                  <Award className="h-8 w-8 text-yellow-500" />
-                  <div>
-                    <p className="font-medium text-gray-900">First Steps</p>
-                    <p className="text-sm text-gray-600">Completed first lesson</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <Award className="h-8 w-8 text-blue-500" />
-                  <div>
-                    <p className="font-medium text-gray-900">Quick Learner</p>
-                    <p className="text-sm text-gray-600">5 lessons in one day</p>
-                  </div>
-                </div>
-              </div>
+              <h3 className="text-lg font-bold text-white mb-4">Community</h3>
+              <p className="text-gray-300 text-sm mb-4">
+                Join our Discord community to connect with other learners and get help.
+              </p>
+              <button className="btn-secondary w-full text-sm">
+                Join Discord
+              </button>
             </motion.div>
           </div>
         </div>
       </div>
 
-      <CourseModal
-        isOpen={courseModalOpen}
-        onClose={() => setCourseModalOpen(false)}
-      />
+      {/* Course Modal */}
+      {showCourse && (
+        <div className="fixed inset-0 z-50 bg-black">
+          <div className="absolute top-4 right-4 z-10">
+            <button
+              onClick={() => setShowCourse(false)}
+              className="glass-effect p-2 rounded-lg text-white hover:bg-white/20 transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+          </div>
+          <iframe
+            src="https://app.courseau.co/projects/aca90ee7-81a5-4a86-85db-a5fb10469735/preview?mode=course"
+            style={{ border: 'none', height: '100%', width: '100%' }}
+            allowTransparency={true}
+            title="Vibe Coding Course"
+          />
+        </div>
+      )}
     </div>
   )
 }
