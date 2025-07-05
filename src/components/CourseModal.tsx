@@ -66,7 +66,7 @@ export default function CourseModal({ isOpen, onClose }: CourseModalProps) {
 
             <div className="w-full h-full">
               <iframe 
-                src="https://app.courseau.co/projects/dd809d68-0fea-4d38-86d0-e028b55ca531/preview?mode=course" 
+                src="https://app.courseau.co/projects/aca90ee7-81a5-4a86-85db-a5fb10469735/preview?mode=course" 
                 style={{ 
                   border: 'none', 
                   height: isFullscreen ? 'calc(100vh - 73px)' : 'calc(80vh - 73px)', 
