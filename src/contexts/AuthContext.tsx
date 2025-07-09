@@ -6,8 +6,8 @@ interface AuthContextType {
   user: User | null
   session: Session | null
   loading: boolean
-  signUp: (email: string, password: string) => Promise<any>
-  signIn: (email: string, password: string) => Promise<any>
+  signUp: (email: string, password: string) => Promise<void>
+  signIn: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
 }
 
@@ -51,7 +51,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email,
       password,
     })
-    return { data, error }
+    
+    if (error) {
+      throw new Error(error.message)
+    }
+    
+    return data
   }
 
   const signIn = async (email: string, password: string) => {
@@ -59,11 +64,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email,
       password,
     })
-    return { data, error }
+    
+    if (error) {
+      throw new Error(error.message)
+    }
+    
+    return data
   }
 
   const signOut = async () => {
-    await supabase.auth.signOut()
+    const { error } = await supabase.auth.signOut()
+    if (error) {
+      throw new Error(error.message)
+    }
   }
 
   const value = {

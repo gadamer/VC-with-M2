@@ -19,23 +19,76 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   const { signIn, signUp } = useAuth()
 
+  const resetForm = () => {
+    setEmail('')
+    setPassword('')
+    setName('')
+    setError('')
+    setShowPassword(false)
+  }
+
+  const handleClose = () => {
+    resetForm()
+    onClose()
+  }
+
+  const validateForm = () => {
+    if (!email.trim()) {
+      setError('Email is required')
+      return false
+    }
+    
+    if (!email.includes('@')) {
+      setError('Please enter a valid email address')
+      return false
+    }
+    
+    if (!password.trim()) {
+      setError('Password is required')
+      return false
+    }
+    
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long')
+      return false
+    }
+    
+    if (!isLogin && !name.trim()) {
+      setError('Name is required')
+      return false
+    }
+    
+    return true
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!validateForm()) {
+      return
+    }
+    
     setLoading(true)
     setError('')
 
     try {
       if (isLogin) {
-        await signIn(email, password)
+        await signIn(email.trim(), password)
       } else {
-        await signUp(email, password)
+        await signUp(email.trim(), password)
       }
-      onClose()
+      handleClose()
     } catch (err: any) {
-      setError(err.message || 'An error occurred')
+      console.error('Auth error:', err)
+      setError(err.message || 'An unexpected error occurred. Please try again.')
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleModeSwitch = () => {
+    setIsLogin(!isLogin)
+    setError('')
   }
 
   return (
@@ -47,7 +100,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-            onClick={onClose}
+            onClick={handleClose}
           />
           
           <motion.div
@@ -57,8 +110,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
             className="relative w-full max-w-md glass-effect rounded-2xl p-8 shadow-2xl"
           >
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+              aria-label="Close modal"
             >
               <X className="h-6 w-6" />
             </button>
@@ -72,7 +126,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6" noValidate>
               {!isLogin && (
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -83,6 +137,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     onChange={(e) => setName(e.target.value)}
                     className="w-full pl-12 pr-4 py-3 bg-dark-800/50 border border-dark-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                     required={!isLogin}
+                    disabled={loading}
                   />
                 </div>
               )}
@@ -96,6 +151,8 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-12 pr-4 py-3 bg-dark-800/50 border border-dark-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                   required
+                  disabled={loading}
+                  autoComplete="email"
                 />
               </div>
 
@@ -108,11 +165,16 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-12 pr-12 py-3 bg-dark-800/50 border border-dark-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
                   required
+                  disabled={loading}
+                  autoComplete={isLogin ? 'current-password' : 'new-password'}
+                  minLength={6}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  disabled={loading}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -123,6 +185,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="text-red-400 text-sm text-center bg-red-500/10 border border-red-500/20 rounded-lg p-3"
+                  role="alert"
                 >
                   {error}
                 </motion.div>
@@ -133,7 +196,14 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 disabled={loading}
                 className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? 'Please wait...' : (isLogin ? 'Sign In' : 'Create Account')}
+                {loading ? (
+                  <div className="flex items-center justify-center space-x-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span>Please wait...</span>
+                  </div>
+                ) : (
+                  isLogin ? 'Sign In' : 'Create Account'
+                )}
               </button>
             </form>
 
@@ -141,8 +211,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
               <p className="text-gray-300">
                 {isLogin ? "Don't have an account?" : 'Already have an account?'}
                 <button
-                  onClick={() => setIsLogin(!isLogin)}
+                  onClick={handleModeSwitch}
                   className="ml-2 text-primary-400 hover:text-primary-300 font-medium transition-colors"
+                  disabled={loading}
                 >
                   {isLogin ? 'Sign Up' : 'Sign In'}
                 </button>
