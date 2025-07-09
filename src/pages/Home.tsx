@@ -9,7 +9,7 @@ import { useAuth } from '../contexts/AuthContext'
 
 export default function Home() {
   const [authModalOpen, setAuthModalOpen] = useState(false)
-  const [showCourse, setShowCourse] = useState(false)
+  const [pendingCourseAccess, setPendingCourseAccess] = useState(false)
   const { user } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
@@ -19,7 +19,13 @@ export default function Home() {
     if (user && location.state?.from) {
       navigate('/dashboard', { replace: true })
     }
-  }, [user, navigate, location.state])
+    
+    // If user just authenticated and was trying to access course, navigate to course page
+    if (user && pendingCourseAccess) {
+      navigate('/course')
+      setPendingCourseAccess(false)
+    }
+  }, [user, navigate, location.state, pendingCourseAccess])
 
   const handleAuthClick = () => {
     if (user) {
@@ -31,10 +37,16 @@ export default function Home() {
 
   const handleCourseClick = () => {
     if (user) {
-      setShowCourse(true)
+      navigate('/course')
     } else {
+      setPendingCourseAccess(true)
       setAuthModalOpen(true)
     }
+  }
+
+  const handleAuthSuccess = () => {
+    // This will be called after successful authentication
+    // The useEffect will handle navigation if pendingCourseAccess is true
   }
 
   return (
@@ -46,31 +58,12 @@ export default function Home() {
       
       <AuthModal 
         isOpen={authModalOpen} 
-        onClose={() => setAuthModalOpen(false)} 
+        onClose={() => {
+          setAuthModalOpen(false)
+          setPendingCourseAccess(false)
+        }}
+        onAuthSuccess={handleAuthSuccess}
       />
-
-      {/* Course Modal */}
-      {showCourse && (
-        <div className="fixed inset-0 z-50 bg-black">
-          <div className="absolute top-4 right-4 z-10">
-            <button
-              onClick={() => setShowCourse(false)}
-              className="glass-effect p-2 rounded-lg text-white hover:bg-white/20 transition-colors"
-              aria-label="Close course"
-            >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          <iframe
-            src="https://app.courseau.co/projects/aca90ee7-81a5-4a86-85db-a5fb10469735/preview?mode=course"
-            style={{ border: 'none', height: '100%', width: '100%' }}
-            allowTransparency={true}
-            title="Vibe Coding Course"
-          />
-        </div>
-      )}
     </div>
   )
 }

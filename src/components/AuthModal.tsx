@@ -6,9 +6,10 @@ import { useAuth } from '../contexts/AuthContext'
 interface AuthModalProps {
   isOpen: boolean
   onClose: () => void
+  onAuthSuccess?: () => void
 }
 
-export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
+export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -78,6 +79,10 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
         await signUp(email.trim(), password)
       }
       handleClose()
+      // Call the success callback if provided
+      if (onAuthSuccess) {
+        onAuthSuccess()
+      }
     } catch (err: any) {
       console.error('Auth error:', err)
       setError(err.message || 'An unexpected error occurred. Please try again.')

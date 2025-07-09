@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
+import Course from './pages/Course'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
@@ -21,6 +22,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/course" 
+            element={
+              <ProtectedRoute>
+                <Course />
               </ProtectedRoute>
             } 
           />

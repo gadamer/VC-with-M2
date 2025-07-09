@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Play, BookOpen, Trophy, Clock, User, LogOut, X } from 'lucide-react'
+import { Play, BookOpen, Trophy, Clock, User, LogOut, ArrowRight } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 export default function Dashboard() {
   const { user, signOut } = useAuth()
-  const [showCourse, setShowCourse] = useState(false)
+  const navigate = useNavigate()
 
   const stats = [
     { label: 'Lessons Completed', value: '12/24', icon: BookOpen, color: 'from-primary-500 to-primary-600' },
@@ -128,11 +129,12 @@ export default function Dashboard() {
                 Access the complete Vibe Coding course with all lessons, projects, and resources.
               </p>
               <button
-                onClick={() => setShowCourse(true)}
+                onClick={() => navigate('/course')}
                 className="btn-primary w-full"
               >
                 <Play className="h-5 w-5 mr-2" />
-                Launch Course
+                Go to Course
+                <ArrowRight className="h-5 w-5 ml-2" />
               </button>
             </motion.div>
           </div>
@@ -175,26 +177,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-
-      {/* Course Modal */}
-      {showCourse && (
-        <div className="fixed inset-0 z-50 bg-black">
-          <div className="absolute top-4 right-4 z-10">
-            <button
-              onClick={() => setShowCourse(false)}
-              className="glass-effect p-2 rounded-lg text-white hover:bg-white/20 transition-colors"
-            >
-              <X className="h-6 w-6" />
-            </button>
-          </div>
-          <iframe
-            src="https://app.courseau.co/projects/aca90ee7-81a5-4a86-85db-a5fb10469735/preview?mode=course"
-            style={{ border: 'none', height: '100%', width: '100%' }}
-            allowTransparency={true}
-            title="Vibe Coding Course"
-          />
-        </div>
-      )}
     </div>
   )
 }
