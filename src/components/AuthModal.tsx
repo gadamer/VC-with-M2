@@ -2,14 +2,16 @@ import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import { useNavigate } from 'react-router-dom'
 
 interface AuthModalProps {
   isOpen: boolean
   onClose: () => void
   onAuthSuccess?: () => void
+  redirectTo?: string
 }
 
-export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
+export default function AuthModal({ isOpen, onClose, onAuthSuccess, redirectTo }: AuthModalProps) {
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -19,6 +21,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
   const [error, setError] = useState('')
 
   const { signIn, signUp } = useAuth()
+  const navigate = useNavigate()
 
   const resetForm = () => {
     setEmail('')
@@ -78,10 +81,16 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
       } else {
         await signUp(email.trim(), password)
       }
+      
       handleClose()
-      // Call the success callback if provided
-      if (onAuthSuccess) {
+      
+      // Navigate to the specified redirect path or call success callback
+      if (redirectTo) {
+        navigate(redirectTo)
+      } else if (onAuthSuccess) {
         onAuthSuccess()
+      } else {
+        navigate('/dashboard')
       }
     } catch (err: any) {
       console.error('Auth error:', err)
